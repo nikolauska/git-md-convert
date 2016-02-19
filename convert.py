@@ -108,8 +108,8 @@ def load_data(repo_url, repo_path, wiki_url, wiki_path, branch):
             print("\n############################################\n")
 
 def markdown_convert(user, repo):
-    repo_path = os.path.abspath("./downloaded/{}/{}".format(user, repo))
-    convert_path = os.path.abspath("./converted/{}/{}/html".format(user, repo))
+    repo_path = os.path.join(os.path.abspath("./"), "downloaded", user, repo)
+    convert_path = os.path.join(os.path.abspath("./"), "converted", user, repo, "html")
 
     if not os.path.exists(os.path.abspath("./converted/")):
         os.mkdir(os.path.abspath("./converted/"))
@@ -171,8 +171,8 @@ def main(repo_url, branch):
     user = get_user_name(repo_url)
     wiki_url = get_wiki_url(repo_url)
 
-    repo_path = "downloaded/{}/{}/repository".format(user, repo)
-    wiki_path = "downloaded/{}/{}/wiki".format(user, repo)
+    repo_path = os.path.join(os.path.abspath("./"), "downloaded", user, repo, "repository")
+    wiki_path = os.path.join(os.path.abspath("./"), "downloaded", user, repo, "wiki")
 
     if wiki_url != None:
         print_blue("\n############################################\n")
