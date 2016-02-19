@@ -107,30 +107,18 @@ def load_data(repo_url, repo_path, wiki_url, wiki_path, branch):
             git_clone(wiki_url, wiki_path)
             print("\n############################################\n")
 
-def markdown_convert(user, repo):
-    repo_path = os.path.join(os.path.abspath("./"), "downloaded", user, repo)
-    convert_path = os.path.join(os.path.abspath("./"), "converted", user, repo, "html")
+def markdown_convert(repo_path, wiki_path, html_path):
+    if not os.path.exists(html_path):
+        os.mkdir(html_path)
 
-    if not os.path.exists(os.path.abspath("./converted/")):
-        os.mkdir(os.path.abspath("./converted/"))
-
-    if not os.path.exists(os.path.abspath("./converted/{}/".format(user))):
-        os.mkdir(os.path.abspath("./converted/{}/".format(user)))
-
-    if not os.path.exists(os.path.abspath("./converted/{}/{}".format(user, repo))):
-        os.mkdir(os.path.abspath("./converted/{}/{}".format(user, repo)))
-
-    if not os.path.exists(convert_path):
-        os.mkdir(convert_path)
-
-    files = find_files(os.path.join(repo_path, "repository"), ".md")
-    files.extend(find_files(os.path.join(repo_path, "wiki"), ".md"))
+    files = find_files(repo_path, ".md")
+    files.extend(find_files(wiki_path, ".md"))
 
     html_files = []
 
     for file in files:
         temp = file.replace(repo_path, "").split("\\")
-        file_path = convert_path
+        file_path = html_path
 
         for asd in temp:
             if not ".md" in asd:
@@ -173,6 +161,7 @@ def main(repo_url, branch):
 
     repo_path = os.path.join(os.path.abspath("./"), "downloaded", user, repo, "repository")
     wiki_path = os.path.join(os.path.abspath("./"), "downloaded", user, repo, "wiki")
+    html_path = os.path.join(os.path.abspath("./"), "downloaded", user, repo, "wiki")
 
     if wiki_url != None:
         print_blue("\n############################################\n")
@@ -189,7 +178,7 @@ def main(repo_url, branch):
         print_blue("\n############################################\n")
 
     load_data(repo_url, repo_path, wiki_url, wiki_path, branch)
-    md_files = markdown_convert(user, repo)
+    md_files = markdown_convert(repo_path, wiki_path, html_path)
 
     return 0
 
