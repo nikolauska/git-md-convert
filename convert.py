@@ -16,7 +16,7 @@ from library.color import print_red, print_green, print_blue, print_yellow
 from library.git import git_pull, git_clone
 from library.files import find_files, generate_folders
 
-from library.pandoc_service import PandocPDFService, PandocHTMLService
+from library.pandoc_service import PandocPDFService, PandocHTMLService, PandocRSTService
 
 def is_git_url(url):
     return ".git" in url
@@ -118,6 +118,8 @@ def convert_files(repo_path, wiki_path, out_path, out_format):
     service = PandocHTMLService()
     if out_format == 'pdf':
         service = PandocPDFService()
+    elif out_format == 'rst':
+        service = PandocRSTService()
 
     for repo_file in find_files(repo_path, ".md", start=repo_path):
         input_file = os.path.join(repo_path, repo_file)

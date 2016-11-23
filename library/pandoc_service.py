@@ -56,3 +56,21 @@ class PandocHTMLService(BasePandocService):
                     outputfile=to_file, extra_args=extra_args)
         except:
             print("Failed to generate file!")
+
+class PandocRSTService(BasePandocService):
+    """
+    Generate markdown to rst format
+    """
+    def generate(self, markdown, **kwargs):
+        to_file = kwargs.get('to_file', '')
+
+        extra_args = (
+            '--smart',
+            '--standalone'
+        )
+        try:
+            # generate it using pandoc
+            self.service.convert_file(markdown, 'rst', format='md',
+                    outputfile=to_file, extra_args=extra_args)
+        except:
+            print("Failed to generate file!")
