@@ -2,8 +2,10 @@
 # Project gitignore
 # *****************
 
+# Generated project files
+/myenv
 /converted
-/downloaded
+/cache
 
 # *****************
 # Python gitignore
