@@ -18,6 +18,9 @@ from library.files import find_files, generate_folders
 
 from library.pandoc_service import PandocPDFService, PandocHTMLService
 
+def is_git_url(url):
+    return ".git" in url
+
 def get_repo_name(url):
     splitted = url.split("/")
     return splitted[len(splitted) - 1].replace(".git", "")
@@ -74,7 +77,7 @@ def load_data(repo_url, repo_path, wiki_url, wiki_path, branch):
         # Move back to last dir
         os.chdir(prevdir)
     else:
-        print("Cloning repository from {}...".format(repo_url))
+        print("Cloning repository from {}".format(repo_url))
         git_clone(repo_url, repo_path)
 
     if wiki_url != None:
@@ -100,12 +103,17 @@ def load_data(repo_url, repo_path, wiki_url, wiki_path, branch):
             # Move back to last dir
             os.chdir(prevdir)
         else:
-            print("Cloning wiki from {}...".format(wiki_url))
+            print("Cloning wiki from {}".format(wiki_url))
             git_clone(wiki_url, wiki_path)
 
 def convert_files(repo_path, wiki_path, out_path, out_format):
     repo_output = os.path.join(out_path, "repository")
     wiki_output = os.path.join(out_path, "wiki")
+
+    if os.path.exists(repo_output):
+        shutil.rmtree(repo_output)
+    if os.path.exists(wiki_output):
+        shutil.rmtree(wiki_output)
 
     service = PandocHTMLService()
     if out_format == 'pdf':
@@ -118,17 +126,20 @@ def convert_files(repo_path, wiki_path, out_path, out_format):
         generate_folders(output_file)
         service.generate(input_file, to_file=output_file)
 
-    for wiki_file in find_files(wiki_path, ".md", start=repo_path):
+    for wiki_file in find_files(wiki_path, ".md", start=wiki_path):
         input_file = os.path.join(wiki_path, wiki_file)
         output_file = os.path.join(wiki_output, wiki_file.replace(".md", ".{}".format(out_format)))
         print("Generating file {}".format(output_file))
         generate_folders(output_file)
         service.generate(input_file, to_file=output_file)
 
-
     return 0
 
 def main(repo_url, branch, out_format):
+    if not is_git_url(repo_url):
+        print_red("{} is not proper git clone url".format(repo_url))
+        return 1
+
     repo = get_repo_name(repo_url)
     user = get_user_name(repo_url)
     wiki_url = get_wiki_url(repo_url)
